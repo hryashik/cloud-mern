@@ -1,18 +1,18 @@
 import './App.css'
 import Navbar from './components/Navbar/Navbar'
 import { Routes, Route } from 'react-router-dom'
-import { Main } from './components/Main/Main'
-import { Registration } from './components/Registration/Registration'
+import { Main } from './pages/Main'
+import { Registration } from './pages/Registration/Registration'
 
 const App: React.FC = () => {
   return (
-    <div>
+    <>
       <Navbar />
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/registration" element={<Registration />} />
       </Routes>
-    </div>
+    </>
   )
 }
 
