@@ -1,8 +1,9 @@
-import './App.css'
+import './App.scss'
 import Navbar from './components/Navbar/Navbar'
 import { Routes, Route } from 'react-router-dom'
 import { Main } from './pages/Main'
 import { Registration } from './pages/Registration/Registration'
+import { Login } from './pages/Login/Login'
 
 const App: React.FC = () => {
   return (
@@ -11,6 +12,7 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/registration" element={<Registration />} />
+        <Route path="/auth" element={<Login />} />
       </Routes>
     </>
   )

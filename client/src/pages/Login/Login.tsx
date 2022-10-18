@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import Input from "../../components/UI/Input";
-import style from './Registration.module.scss'
+import style from '../Registration/Registration.module.scss'
 import { Button, Typography } from '@mui/material'
 import { api } from "../../api/api";
 import { Link } from "react-router-dom";
 
-export const Registration: React.FC = () => {
+export const Login: React.FC = () => {
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const [isRegister, setRegister] = useState(false)
@@ -20,40 +20,36 @@ export const Registration: React.FC = () => {
 	}
 	function handlerError(message: string) {
 		//Перебираю ошибки
-		if (message.indexOf('Uncorrect') >= 0) {
-			return 'Форма некорректно заполнена'
+		if (message.indexOf('User') >= 0) {
+			const email = message.split(' ')[1]
+			return `Такого пользователя не существует`
 		}
-		if (message.indexOf('exist')) {
-			const user = message.split(' ')[2]
-			return `Пользователь ${user} уже существует`
+		if (message.indexOf('password') >= 0) {
+			return 'Неверный пароль'
 		}
 	}
 
-	async function registration() {
+	async function auth() {
 		try {
-			const resp = await api.registration(email, password)
-			setRegister(true)
+			const resp = await api.auth(email, password)
 		} catch (e: any) {
 			const message = e.response.data.message
 			setNotification(message)
-			console.log(e)
+			console.log(message)
 		}
 	}
 	return (
 		<div className={style.wrapper}>
 			{!isRegister ?
 				<div className={style.registration}>
-					<Typography fontSize={"20px"} variant={"h3"}>Форма регистрации</Typography>
+					<Typography fontSize={"20px"} variant={"h3"}>Форма авторизации</Typography>
 					<Input focus={true} value={email} label="Email" onChange={changeEmail} />
 					<Input value={password} label="Password" onChange={changePassword} />
-					<Button onClick={registration} variant="contained">Зарегистрироваться</Button>
+					<Button onClick={auth} variant="contained">Войти</Button>
 					{notification && <Typography variant="subtitle1">{handlerError(notification)}</Typography>}
 				</div>
 				:
-				<div>
-					<Typography>Регистрация прошла успешно</Typography>
-					<Link to="/">Перейти на свою страницу</Link>
-				</div>
+				''
 			}
 
 		</div>
