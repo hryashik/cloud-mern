@@ -4,8 +4,11 @@ import { Routes, Route } from 'react-router-dom'
 import { Main } from './pages/Main'
 import { Registration } from './pages/Registration/Registration'
 import { Login } from './pages/Login/Login'
+import { useSelector } from 'react-redux'
+import { RootState } from './redux/store'
 
 const App: React.FC = () => {
+  const isAuth = useSelector((state: RootState) => state.user.isAuth)
   return (
     <>
       <Navbar />

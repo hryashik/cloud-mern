@@ -3,9 +3,15 @@ import Input from "../../components/UI/Input";
 import style from './Registration.module.scss'
 import { Button, Typography } from '@mui/material'
 import { api } from "../../api/api";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState, useAppDispatch } from "../../redux/store";
+import { defineUser, ResponseDataType } from "../../redux/slices/userSlice";
+import { AxiosResponse } from "axios";
 
 export const Registration: React.FC = () => {
+	const isAuth = useSelector((state: RootState) => state.user.isAuth)
+	const dispatch = useAppDispatch()
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const [isRegister, setRegister] = useState(false)
@@ -31,31 +37,26 @@ export const Registration: React.FC = () => {
 
 	async function registration() {
 		try {
-			const resp = await api.registration(email, password)
-			setRegister(true)
+			const { data } = await api.registration(email, password)
+			dispatch(defineUser(data))
 		} catch (e: any) {
 			const message = e.response.data.message
 			setNotification(message)
 			console.log(e)
 		}
 	}
+	if (isAuth) {
+		return <Navigate to="/" />
+	}
 	return (
 		<div className={style.wrapper}>
-			{!isRegister ?
-				<div className={style.registration}>
-					<Typography fontSize={"20px"} variant={"h3"}>Форма регистрации</Typography>
-					<Input focus={true} value={email} label="Email" onChange={changeEmail} />
-					<Input value={password} label="Password" onChange={changePassword} />
-					<Button onClick={registration} variant="contained">Зарегистрироваться</Button>
-					{notification && <Typography variant="subtitle1">{handlerError(notification)}</Typography>}
-				</div>
-				:
-				<div>
-					<Typography>Регистрация прошла успешно</Typography>
-					<Link to="/">Перейти на свою страницу</Link>
-				</div>
-			}
-
+			<div className={style.registration}>
+				<Typography fontSize={"20px"} variant={"h3"}>Форма регистрации</Typography>
+				<Input focus={true} value={email} label="Email" onChange={changeEmail} />
+				<Input value={password} label="Password" onChange={changePassword} />
+				<Button onClick={registration} variant="contained">Зарегистрироваться</Button>
+				{notification && <Typography variant="subtitle1">{handlerError(notification)}</Typography>}
+			</div>
 		</div>
 	);
 }

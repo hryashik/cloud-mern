@@ -1,0 +1,12 @@
+a {
+	font-family: roboto;
+	font-weight: 500;
+	color: white;
+	text-decoration: none;
+	text-transform: uppercase;
+	font-size: 14px;
+
+	&:first-child {
+		margin-right: 10px;
+	}
+}

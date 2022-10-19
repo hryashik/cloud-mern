@@ -30,7 +30,17 @@ router.post(
       const hashPassword = await bcrypt.hash(password, 8)
       const user = new User({ email, password: hashPassword })
       await user.save()
-      return res.json({ message: 'User was created' })
+      const token = jwt.sign({ id: user.id }, config.tokenSecretKey, { expiresIn: '1h' })
+      res.json({
+        token,
+        user: {
+          id: user.id,
+          email: user.email,
+          diskSpace: user.diskSpace,
+          usedSpace: user.usedSpace,
+          avatar: user.avatar,
+        },
+      })
     } catch (e) {
       console.log(e)
       res.send('Server error')
@@ -38,10 +48,12 @@ router.post(
   },
 )
 router.post('/login', async (req, res) => {
+  console.log(req.body)
   try {
     const { email, password } = req.body
     const user = await User.findOne({ email })
     if (!user) {
+      console.log(req.body)
       return res.status(404).json({ message: 'User not found' })
     }
     const validatePassword = bcrypt.compareSync(password, user.password)
