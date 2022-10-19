@@ -36,7 +36,7 @@ export const Login: React.FC = () => {
 
 	async function auth() {
 		try {
-			const resp = await api.auth(email, password)
+			const resp = await api.login(email, password)
 			const data = resp.data
 			dispatch(defineUser(data))
 

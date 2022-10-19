@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import { ResponseDataType } from '../redux/slices/userSlice'
 
 export const api = {
@@ -12,11 +12,28 @@ export const api = {
     })
     return resp
   },
-  async auth(email: string, password: string) {
+  async login(email: string, password: string) {
     const resp = await this.instance.post('/login', {
       email: email,
       password: password,
     })
     return resp
   },
+
+  async auth() {
+    try {
+      const resp: AuthTokenType = await axios.get('http://localhost:3333/api/auth/auth', {
+        headers: {
+          Authorization: localStorage.getItem('token'),
+        },
+      })
+      return resp
+    } catch (e) {
+      console.log(e)
+    }
+  },
+}
+
+export type AuthTokenType = {
+  data: ResponseDataType
 }
