@@ -9,9 +9,11 @@ import { RootState, useAppDispatch } from './redux/store'
 import { useEffect } from 'react'
 import { api } from './api/api'
 import { defineUser, ResponseDataType } from './redux/slices/userSlice'
+import { toggleReadyApp } from './redux/slices/appSlice'
+import { Preloader } from './components/Preloader/Preloader'
 
 const App: React.FC = () => {
-  const isAuth = useSelector((state: RootState) => state.user.isAuth)
+  const appIsReady = useSelector((state: RootState) => state.app.isReady)
   const dispatch = useAppDispatch()
   async function authToken() {
     try {
@@ -21,17 +23,30 @@ const App: React.FC = () => {
       console.log(e)
     }
   }
+  async function start() {
+    await authToken()
+    setTimeout(() => {
+      dispatch(toggleReadyApp(true))
+    }, 1500)
+  }
   useEffect(() => {
-    authToken()
+    start()
   }, [])
   return (
     <>
       <Navbar />
-      <Routes>
-        <Route path="/" element={<Main />} />
-        <Route path="/registration" element={<Registration />} />
-        <Route path="/auth" element={<Login />} />
-      </Routes>
+      {appIsReady ?
+        <Routes>
+          <Route path="/" element={<Main />} />
+          <Route path="/registration" element={<Registration />} />
+          <Route path="/auth" element={<Login />} />
+        </Routes>
+        :
+        <div className='preloader'>
+          <Preloader />
+        </div>
+      }
+
     </>
   )
 }
