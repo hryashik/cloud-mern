@@ -10,7 +10,7 @@ const path = require('path')
 app.use(corsMiddleware)
 app.use(express.json())
 app.use('/api/auth', authRouter)
-app.use('/api/file', fileRouter)
+app.use('/api/files', fileRouter)
 
 const start = async () => {
   try {

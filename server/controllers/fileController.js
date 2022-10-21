@@ -1,4 +1,3 @@
-const FileService = require('../services/fileService')
 const User = require('../models/User')
 const File = require('../models/File')
 const fileService = require('../services/fileService')
@@ -14,7 +13,7 @@ class FileController {
         file.path = name
         await fileService.createDir(file)
       } else {
-        file.path = path.join(`${parentFile.path}, ${file.name}`)
+        file.path = path.join(`${parentFile.path}/${file.name}`)
         await fileService.createDir(file)
         parentFile.childs.push(file._id)
         await parentFile.save()
@@ -24,6 +23,19 @@ class FileController {
     } catch (e) {
       console.log(e)
       return res.status(40).json(e)
+    }
+  }
+  async fetchFiles(req, res) {
+    try {
+      if (req.query.parent) {
+        const files = await File.find({ user: req.user.id, parent: req.query.parent })
+        return res.json({ files })
+      } else {
+        const files = await File.find({ user: req.user.id })
+        return res.json({ files })
+      }
+    } catch (e) {
+      res.status(500).json({ message: 'Can not get files' })
     }
   }
 }

@@ -1,4 +1,4 @@
-const { model, Schema, ObjectId } = require('mongoose')
+const { model, Schema } = require('mongoose')
 
 const File = new Schema({
   name: { type: String, require: true },
