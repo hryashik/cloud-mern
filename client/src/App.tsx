@@ -1,7 +1,7 @@
 import './App.scss'
 import Navbar from './components/Navbar/Navbar'
 import { Routes, Route } from 'react-router-dom'
-import { Main } from './pages/Main'
+import { Main } from './pages/Main/Main'
 import { Registration } from './pages/Registration/Registration'
 import { Login } from './pages/Login/Login'
 import { useSelector } from 'react-redux'
