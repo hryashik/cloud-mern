@@ -1,5 +1,17 @@
-import axios, { AxiosResponse } from 'axios'
+import axios from 'axios'
 import { ResponseDataType } from '../redux/slices/userSlice'
+
+export type FileType = {
+  _id: string
+  date: string
+  name: string
+  path: string
+  parent?: string
+  type: string
+  user: string
+  size: number
+  childs: string[] | null
+}
 
 export const api = {
   instance: axios.create({
@@ -35,7 +47,7 @@ export const api = {
 
   async getFiles() {
     try {
-      const resp = await this.instance.get('/files', {
+      const resp = await this.instance.get<FileType[]>('/files', {
         headers: {
           Authorization: localStorage.getItem('token'),
         },
@@ -44,6 +56,17 @@ export const api = {
     } catch (e) {
       console.log(e)
     }
+  },
+  async createDir(nameDir: string) {
+    try {
+      const resp = await this.instance.post('/files', {
+        headers: {
+          Authorization: localStorage.getItem('token'),
+        },
+        name: nameDir,
+        type: 'dir',
+      })
+    } catch (e) {}
   },
 }
 
