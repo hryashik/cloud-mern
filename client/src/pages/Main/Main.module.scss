@@ -1,3 +1,13 @@
 .main {
 	padding: 30px;
+
+	header {
+		margin-bottom: 25px;
+		display: flex;
+		align-items: center;
+
+		svg {
+			margin-right: 20px;
+		}
+	}
 }

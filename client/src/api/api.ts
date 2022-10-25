@@ -16,6 +16,9 @@ export type FileType = {
 export const api = {
   instance: axios.create({
     baseURL: 'http://localhost:3333/api',
+    headers: {
+      Authorization: localStorage.getItem('token'),
+    },
   }),
   async registration(email: string, password: string) {
     const resp = await this.instance.post<ResponseDataType>('/auth/registration', {
@@ -60,12 +63,10 @@ export const api = {
   async createDir(nameDir: string) {
     try {
       const resp = await this.instance.post('/files', {
-        headers: {
-          Authorization: localStorage.getItem('token'),
-        },
         name: nameDir,
         type: 'dir',
       })
+      return resp
     } catch (e) {}
   },
 }

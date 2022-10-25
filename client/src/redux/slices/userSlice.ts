@@ -8,10 +8,6 @@ import { api } from '../../api/api'
   return resp
 }) */
 
-type ValueType = {
-  email: string
-  password: string
-}
 export type UserResponseType = {
   diskSpace: number
   usedSpace: number
