@@ -6,5 +6,6 @@ const router = new Router()
 
 router.post('', authMiddleware, fileController.createDir)
 router.get('', authMiddleware, fileController.fetchFiles)
+router.delete('', authMiddleware, fileController.deleteFile)
 
 module.exports = router

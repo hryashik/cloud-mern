@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { ResponseDataType } from '../redux/slices/userSlice'
 
-export type FileType = {
+export interface FileType {
   _id: string
   date: string
   name: string
@@ -67,7 +67,16 @@ export const api = {
         type: 'dir',
       })
       return resp
-    } catch (e) {}
+    } catch (e) {
+      console.log(e)
+    }
+  },
+  async deleteFile(id: string) {
+    try {
+      const resp = await this.instance.delete(`/files/?fileId=${id}`)
+    } catch (e) {
+      console.log(e)
+    }
   },
 }
 

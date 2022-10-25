@@ -13,6 +13,7 @@ export const Popup: React.FC<PopupProps> = ({ clickOnButton }) => {
 		<div className={styles.popupWrapper}>
 			<div className={styles.popup}>
 				<TextField
+					autoFocus={true}
 					label="Название папки"
 					variant="standard"
 					onChange={(e) => setInputValue(e.target.value)}

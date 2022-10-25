@@ -22,7 +22,7 @@ class FileController {
       return res.json(file)
     } catch (e) {
       console.log(e)
-      return res.status(40).json(e)
+      return res.status(400).json(e)
     }
   }
   async fetchFiles(req, res) {
@@ -36,6 +36,18 @@ class FileController {
       }
     } catch (e) {
       res.status(500).json({ message: 'Can not get files' })
+    }
+  }
+  async deleteFile(req, res) {
+    try {
+      const { fileId } = req.query
+      const file = await File.findOne({ _id: fileId })
+      await File.deleteOne({ _id: fileId })
+      await fileService.deleteFile(file)
+      res.status(200).json({ message: 'file was deleted' })
+    } catch (e) {
+      console.log(e)
+      res.status(500).json(e)
     }
   }
 }

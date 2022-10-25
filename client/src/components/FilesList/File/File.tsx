@@ -1,13 +1,16 @@
 import FolderIcon from '@mui/icons-material/Folder';
-import React, { MouseEvent, MouseEventHandler, SyntheticEvent } from 'react';
+import React, { useState } from 'react';
 import { FileType } from '../../../api/api';
 import styles from './File.module.scss'
 
+interface FileProps extends FileType {
+	deleteFile: (fileId: string) => void
+}
 
-export const File: React.FC<FileType> = ({ name, date, type }) => {
+export const File: React.FC<FileProps> = ({ name, date, _id, type, deleteFile }) => {
 	const fileDate = date.slice(0, 19).replace('T', ' ')
 	return (
-		<div className={styles.file} >
+		<div className={styles.file} onClick={() => deleteFile(_id)} >
 			<div className={styles.name}>
 				<FolderIcon color='action' />
 				<p>{name}</p>

@@ -19,6 +19,21 @@ class FileService {
       }
     })
   }
+  deleteFile(file) {
+    const filePath = path.join(__dirname, `../__usersfiles/${file.user}/${file.path}`)
+    return new Promise((resolve, reject) => {
+      try {
+        if (file.type === 'dir') {
+          fs.rmdirSync(filePath)
+        } else {
+          fs.unlinkSync(filePath)
+        }
+        return resolve({ message: 'File was deleted' })
+      } catch (e) {
+        return reject({ message: 'File error' })
+      }
+    })
+  }
 }
 
 module.exports = new FileService()
