@@ -16,9 +16,6 @@ export interface FileType {
 export const api = {
   instance: axios.create({
     baseURL: 'http://localhost:3333/api',
-    headers: {
-      Authorization: localStorage.getItem('token'),
-    },
   }),
   async registration(email: string, password: string) {
     const resp = await this.instance.post<ResponseDataType>('/auth/registration', {
@@ -48,25 +45,53 @@ export const api = {
     }
   },
 
-  async getFiles() {
+  async getFiles(parentId: string) {
     try {
-      const resp = await this.instance.get<FileType[]>('/files', {
-        headers: {
-          Authorization: localStorage.getItem('token'),
+      const resp = await this.instance.get<FileType[]>(
+        `/files${parentId ? `?parent=${parentId}` : ''}`,
+        {
+          headers: {
+            Authorization: localStorage.getItem('token'),
+          },
         },
-      })
+      )
       return resp
     } catch (e) {
       console.log(e)
     }
   },
-  async createDir(nameDir: string) {
+  async createDir(nameDir: string, parentId: string) {
     try {
-      const resp = await this.instance.post('/files', {
-        name: nameDir,
-        type: 'dir',
-      })
-      return resp
+      if (parentId) {
+        const resp = await this.instance.post(
+          '/files',
+          {
+            name: nameDir,
+            type: 'dir',
+            parent: parentId,
+          },
+          {
+            headers: {
+              Authorization: localStorage.getItem('token'),
+            },
+          },
+        )
+        return resp
+      } else {
+        const resp = await this.instance.post(
+          '/files',
+          {
+            name: nameDir,
+            type: 'dir',
+          },
+          {
+            headers: {
+              Authorization: localStorage.getItem('token'),
+            },
+          },
+        )
+        return resp
+      }
     } catch (e) {
       console.log(e)
     }

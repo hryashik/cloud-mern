@@ -25,9 +25,7 @@ const App: React.FC = () => {
   }
   async function start() {
     await authToken()
-    setTimeout(() => {
-      dispatch(toggleReadyApp(true))
-    }, 1500)
+    dispatch(toggleReadyApp(true))
   }
   useEffect(() => {
     start()
