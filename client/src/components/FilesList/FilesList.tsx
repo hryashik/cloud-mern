@@ -8,9 +8,10 @@ type FilesListProps = {
 	selectedFile: string
 	deleteFile: (fileId: string) => void
 	selectFile: (id: string) => void
+	rightClickOnFile: (fileId: string, coordinates: number[]) => void
 }
 
-export const FilesList: React.FC<FilesListProps> = ({ files, deleteFile, selectedFile, selectFile }) => {
+export const FilesList: React.FC<FilesListProps> = ({ files, deleteFile, selectedFile, selectFile, rightClickOnFile }) => {
 	const filesMapped = files.map(file =>
 		<File
 			{...file}
@@ -18,6 +19,7 @@ export const FilesList: React.FC<FilesListProps> = ({ files, deleteFile, selecte
 			selectedFile={selectedFile}
 			deleteFile={deleteFile}
 			selectFile={selectFile}
+			rightClickOnFile={rightClickOnFile}
 		/>)
 	return (
 		<div className={styles.filesList}>

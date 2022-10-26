@@ -10,6 +10,12 @@ import { Popup } from "../../components/Popup/Popup"
 import Button from '@mui/material/Button';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { style } from "@mui/system"
+import { ContextMenu } from "../../components/ContextMenu/ContextMenu"
+
+export type contextMenuType = {
+	visible: boolean
+	coordinates: number[]
+}
 
 export const Main: React.FC = () => {
 	const dispatch = useAppDispatch()
@@ -19,6 +25,7 @@ export const Main: React.FC = () => {
 	const pathStack = useSelector((state: RootState) => state.files.pathStack)
 	const [visiblePopUp, setVisiblePopUp] = useState(false)
 	const [selectedFile, setSelectedFile] = useState('')
+	const [contextMenu, setContextMenu] = useState({ visible: false, coordinates: [0, 0] })
 
 	async function initialFiles() {
 		try {
@@ -56,6 +63,10 @@ export const Main: React.FC = () => {
 			dispatch(outDir())
 		}
 	}
+	function rightClickOnFile(fileId: string, coordinates: number[]) {
+		setContextMenu({ visible: true, coordinates })
+		console.log(coordinates)
+	}
 	useEffect(() => {
 		initialFiles()
 	}, [currentDir])
@@ -65,9 +76,13 @@ export const Main: React.FC = () => {
 	return (
 		<>
 			{visiblePopUp === true && <Popup hiddenPopUp={setVisiblePopUp} clickOnButton={createDir} />}
+			{contextMenu.visible && <ContextMenu contextMenu={contextMenu} setContextMenu={setContextMenu} />}
 			<div className={styles.main}>
 				<header>
-					<ArrowBackIcon color={pathStack.length > 1 ? 'primary' : 'disabled'} onClick={backClickHandler} />
+					<ArrowBackIcon
+						color={pathStack.length > 1 ? 'primary' : 'disabled'}
+						onClick={backClickHandler}
+						style={{ cursor: pathStack.length > 1 ? 'pointer' : '' }} />
 					<Button
 						variant="outlined"
 						color="primary"
@@ -84,6 +99,7 @@ export const Main: React.FC = () => {
 					files={files}
 					selectedFile={selectedFile}
 					selectFile={selectFile}
+					rightClickOnFile={rightClickOnFile}
 				/>
 			</div>
 		</>
