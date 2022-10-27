@@ -98,7 +98,11 @@ export const api = {
   },
   async deleteFile(id: string) {
     try {
-      const resp = await this.instance.delete(`/files/?fileId=${id}`)
+      const resp = await this.instance.delete(`/files/?fileId=${id}`, {
+        headers: {
+          Authorization: localStorage.getItem('token'),
+        },
+      })
     } catch (e) {
       console.log(e)
     }

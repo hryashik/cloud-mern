@@ -2,15 +2,15 @@ import { RootState, useAppDispatch } from "../../redux/store"
 import { useSelector } from "react-redux"
 import { Navigate } from "react-router-dom"
 import React, { RefObject, useEffect, useState } from "react"
-import { api } from "../../api/api"
+import { api, FileType } from "../../api/api"
 import styles from './Main.module.scss'
 import { FilesList } from "../../components/FilesList/FilesList"
 import { getFiles, outDir, setCurrentDir } from "../../redux/slices/filesSlice"
 import { Popup } from "../../components/Popup/Popup"
 import Button from '@mui/material/Button';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { style } from "@mui/system"
 import { ContextMenu } from "../../components/ContextMenu/ContextMenu"
+import { changeAreaValue } from "../../redux/slices/textAreaSlice"
 
 export type contextMenuType = {
 	visible: boolean
@@ -23,9 +23,12 @@ export const Main: React.FC = () => {
 	const isAuth = useSelector((state: RootState) => state.user.isAuth)
 	const currentDir = useSelector((state: RootState) => state.files.currentDir)
 	const pathStack = useSelector((state: RootState) => state.files.pathStack)
+	const textAreaValue = useSelector((state: RootState) => state.textArea.value)
+
 	const [visiblePopUp, setVisiblePopUp] = useState(false)
 	const [selectedFile, setSelectedFile] = useState('')
 	const [contextMenu, setContextMenu] = useState({ visible: false, coordinates: [0, 0] })
+	const [textAreaId, setTextAreaId] = useState('')
 
 	async function initialFiles() {
 		try {
@@ -57,6 +60,9 @@ export const Main: React.FC = () => {
 	}
 	function selectFile(id: string) {
 		setSelectedFile(id)
+		if (contextMenu && id !== selectedFile) {
+			setTextAreaId('')
+		}
 	}
 	function backClickHandler() {
 		if (pathStack.length > 1) {
@@ -64,9 +70,22 @@ export const Main: React.FC = () => {
 		}
 	}
 	function rightClickOnFile(fileId: string, coordinates: number[]) {
-		setContextMenu({ visible: true, coordinates })
-		console.log(coordinates)
+		if (!textAreaId) {
+			setContextMenu({ visible: true, coordinates })
+		}
 	}
+	async function contextMenuDelete() {
+		await deleteFile(selectedFile)
+		setSelectedFile('')
+		setContextMenu({ visible: false, coordinates: [] })
+	}
+	function renameFile() {
+		setTextAreaId(selectedFile)
+		setContextMenu({ visible: false, coordinates: [] })
+		const selectedFileName = files.find(el => el._id === selectedFile)?.name as string
+		dispatch(changeAreaValue(selectedFileName))
+	}
+
 	useEffect(() => {
 		initialFiles()
 	}, [currentDir])
@@ -76,8 +95,20 @@ export const Main: React.FC = () => {
 	return (
 		<>
 			{visiblePopUp === true && <Popup hiddenPopUp={setVisiblePopUp} clickOnButton={createDir} />}
-			{contextMenu.visible && <ContextMenu contextMenu={contextMenu} setContextMenu={setContextMenu} />}
-			<div className={styles.main}>
+			{contextMenu.visible && <ContextMenu
+				renameFile={renameFile}
+				contextMenu={contextMenu}
+				setContextMenu={setContextMenu}
+				contextMenuDelete={contextMenuDelete}
+			/>}
+			<div className={styles.main} onClick={() => {
+				setSelectedFile('')
+				setTextAreaId('')
+				const selectedFileName = files.find(el => el._id === selectedFile)?.name
+				if (selectedFile && textAreaValue !== selectedFileName) {
+					console.log('Текст был изменен')
+				}
+			}}>
 				<header>
 					<ArrowBackIcon
 						color={pathStack.length > 1 ? 'primary' : 'disabled'}
@@ -100,6 +131,7 @@ export const Main: React.FC = () => {
 					selectedFile={selectedFile}
 					selectFile={selectFile}
 					rightClickOnFile={rightClickOnFile}
+					textAreaId={textAreaId}
 				/>
 			</div>
 		</>

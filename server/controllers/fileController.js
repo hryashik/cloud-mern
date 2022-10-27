@@ -45,6 +45,16 @@ class FileController {
       res.status(500).json(e)
     }
   }
+  async renameFile(req, res) {
+    try {
+      const { fileId, newName } = req.body
+      await File.findOneAndUpdate({ _id: fileId }, { name: newName })
+      res.json({ message: 'File was renamed' })
+    } catch (e) {
+      console.log(e)
+      res.status(500)
+    }
+  }
 }
 
 module.exports = new FileController()

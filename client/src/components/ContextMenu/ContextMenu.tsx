@@ -2,13 +2,15 @@ import { contextMenuType } from '../../pages/Main/Main'
 import styles from './ContextMenu.module.scss'
 
 
-
 type ContextProps = {
   contextMenu: { visible: boolean, coordinates: number[] }
   setContextMenu: ({ visible, coordinates }: contextMenuType) => void
+  contextMenuDelete: () => void
+  renameFile: () => void
 }
 
-export const ContextMenu: React.FC<ContextProps> = ({ setContextMenu, contextMenu }) => {
+export const ContextMenu: React.FC<ContextProps> = (
+  { setContextMenu, contextMenu, contextMenuDelete, renameFile }) => {
   const x = contextMenu.coordinates[0]
   const y = contextMenu.coordinates[1]
   function clickHandler() {
@@ -24,8 +26,8 @@ export const ContextMenu: React.FC<ContextProps> = ({ setContextMenu, contextMen
         onClick={(e) => e.stopPropagation()}
         style={{ left: x, top: y }}
       >
-        <li>Переименовать</li>
-        <li>Удалить</li>
+        <li onClick={renameFile}>Переименовать</li>
+        <li onClick={contextMenuDelete}>Удалить</li>
       </ul>
     </div>
   )
