@@ -2,6 +2,7 @@ const { resolveSoa } = require('dns')
 const fs = require('fs')
 const path = require('path')
 const File = require('../models/File')
+const fsExtra = require('fs-extra')
 
 class FileService {
   createDir(file) {
@@ -22,13 +23,14 @@ class FileService {
   }
   deleteFile(file) {
     const filePath = path.join(__dirname, `../__usersfiles/${file.user}/${file.path}`)
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
         if (file.type === 'dir') {
-          fs.rmdirSync(filePath)
+          await fsExtra.remove(filePath)
         } else {
           fs.unlinkSync(filePath)
         }
+        console.log('file was deleted')
         return resolve({ message: 'File was deleted' })
       } catch (e) {
         return reject({ message: 'File error' })

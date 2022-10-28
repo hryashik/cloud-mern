@@ -37,8 +37,16 @@ class FileController {
     try {
       const { fileId } = req.query
       const file = await File.findOne({ _id: fileId })
-      await File.deleteOne({ _id: fileId })
-      await fileService.deleteFile(file)
+      //if dir has kids
+      if (file.childs.length) {
+        //initialize kids and delete them in the db
+        const kids = await File.find({ parent: fileId })
+        kids.forEach(async el => await el.remove())
+        await fileService.deleteFile(file)
+      } else {
+        await File.deleteOne({ _id: fileId })
+      }
+      await file.remove()
       res.status(200).json({ message: 'file was deleted' })
     } catch (e) {
       console.log(e)

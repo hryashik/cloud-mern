@@ -5,12 +5,12 @@ import React, { RefObject, useEffect, useState } from "react"
 import { api, FileType } from "../../api/api"
 import styles from './Main.module.scss'
 import { FilesList } from "../../components/FilesList/FilesList"
-import { getFiles, outDir, renameSelectFile, setCurrentDir, setSelectedFile } from "../../redux/slices/filesSlice"
+import { deleteFileThunk, getFiles, outDir, renameSelectFile, setCurrentDir, setSelectedFile } from "../../redux/slices/filesSlice"
 import { Popup } from "../../components/Popup/Popup"
 import Button from '@mui/material/Button';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ContextMenu } from "../../components/ContextMenu/ContextMenu"
-import { changeAreaValue, deleteArea, initArea } from "../../redux/slices/textAreaSlice"
+import { deleteArea, initArea } from "../../redux/slices/textAreaSlice"
 
 export type contextMenuType = {
 	visible: boolean
@@ -49,14 +49,6 @@ export const Main: React.FC = () => {
 		}
 
 	}
-	async function deleteFile(fileId: string) {
-		try {
-			const resp = await api.deleteFile(fileId)
-			initialFiles()
-		} catch (e) {
-			console.log(e)
-		}
-	}
 	function backClickHandler() {
 		if (pathStack.length > 1) {
 			dispatch(outDir())
@@ -69,8 +61,7 @@ export const Main: React.FC = () => {
 		}
 	}
 	async function contextMenuDelete() {
-		await deleteFile(selectedFile)
-		setSelectedFile('')
+		await dispatch(deleteFileThunk(selectedFile))
 		setContextMenu({ visible: false, coordinates: [] })
 	}
 	function contextMenuRename() {

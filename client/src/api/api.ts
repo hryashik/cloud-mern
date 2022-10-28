@@ -98,11 +98,12 @@ export const api = {
   },
   async deleteFile(id: string) {
     try {
-      const resp = await this.instance.delete(`/files/?fileId=${id}`, {
+      const resp = await this.instance.delete<{ message: string }>(`/files/?fileId=${id}`, {
         headers: {
           Authorization: localStorage.getItem('token'),
         },
       })
+      return resp.data
     } catch (e) {
       console.log(e)
     }

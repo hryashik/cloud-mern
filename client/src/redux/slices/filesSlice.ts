@@ -15,6 +15,11 @@ const initialState: FilesSliceType = {
   selectedFile: '',
 }
 
+export const deleteFileThunk = createAsyncThunk('files/deleteFile', async (id: string) => {
+  const resp = await api.deleteFile(id)
+  return resp
+})
+
 const filesSlice = createSlice({
   name: 'filesSlice',
   initialState,
@@ -42,6 +47,12 @@ const filesSlice = createSlice({
         findItem.name = action.payload
       }
     },
+  },
+  extraReducers(builder) {
+    builder.addCase(deleteFileThunk.fulfilled, (state, action) => {
+      state.files = state.files.filter(el => el._id !== state.selectedFile)
+      state.selectedFile = ''
+    })
   },
 })
 
