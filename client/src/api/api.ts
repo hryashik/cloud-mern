@@ -107,6 +107,25 @@ export const api = {
       console.log(e)
     }
   },
+  async renameFile(fileId: string, newName: string) {
+    try {
+      const resp = await this.instance.patch(
+        '/files',
+        {
+          fileId,
+          newName,
+        },
+        {
+          headers: {
+            Authorization: localStorage.getItem('token'),
+          },
+        },
+      )
+      return resp
+    } catch (e) {
+      alert('Файл не удалось переименовать')
+    }
+  },
 }
 
 export type AuthTokenType = {

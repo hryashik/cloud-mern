@@ -1,16 +1,18 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { FileType } from '../../api/api'
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { api, FileType } from '../../api/api'
 
 type FilesSliceType = {
   files: FileType[]
   currentDir: string
   pathStack: string[]
+  selectedFile: string
 }
 
 const initialState: FilesSliceType = {
   files: [],
   currentDir: '',
   pathStack: [''],
+  selectedFile: '',
 }
 
 const filesSlice = createSlice({
@@ -31,8 +33,18 @@ const filesSlice = createSlice({
       const backDir = state.pathStack.pop() as string
       state.currentDir = state.pathStack[state.pathStack.length - 1]
     },
+    setSelectedFile(state, action: PayloadAction<string>) {
+      state.selectedFile = action.payload
+    },
+    renameSelectFile(state, action: PayloadAction<string>) {
+      const findItem = state.files.find(el => el._id === state.selectedFile)
+      if (findItem) {
+        findItem.name = action.payload
+      }
+    },
   },
 })
 
 export default filesSlice.reducer
-export const { getFiles, setCurrentDir, outDir, openDir } = filesSlice.actions
+export const { getFiles, setCurrentDir, outDir, openDir, setSelectedFile, renameSelectFile } =
+  filesSlice.actions

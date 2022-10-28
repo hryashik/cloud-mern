@@ -48,7 +48,16 @@ class FileController {
   async renameFile(req, res) {
     try {
       const { fileId, newName } = req.body
-      await File.findOneAndUpdate({ _id: fileId }, { name: newName })
+      const file = await File.findOne({ _id: fileId })
+      if (file.childs.length) {
+        res
+          .status(401)
+          .json({ message: 'Before rename parent directory, you should delete all childs' })
+        return
+      }
+
+      await file.updateOne({ name: newName, path: file.path.replace(file.name, newName) })
+      await fileService.renameFile(file, newName)
       res.json({ message: 'File was renamed' })
     } catch (e) {
       console.log(e)
