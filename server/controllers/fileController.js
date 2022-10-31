@@ -2,6 +2,7 @@ const User = require('../models/User')
 const File = require('../models/File')
 const fileService = require('../services/fileService')
 const path = require('path')
+const fs = require('fs')
 
 class FileController {
   async createDir(req, res) {
@@ -68,8 +69,64 @@ class FileController {
       await fileService.renameFile(file, newName)
       res.json({ message: 'File was renamed' })
     } catch (e) {
+      res.status(500).json(e)
+    }
+  }
+  async uploadFile(req, res) {
+    try {
+      const user = await User.findOne({ _id: req.user.id })
+      const file = req.files.file
+      const { parent } = req.body
+      //Проверка на наличие свободного места
+      if (user.usedSpace + file.size > user.diskSpace) {
+        res.status(400).json({ message: 'There no space on disk' })
+      }
+      const parentDir = await File.findOne({ _id: parent })
+      let filePath
+      // Проверка на наличие родителя
+      if (parentDir) {
+        filePath = path.join(
+          __dirname,
+          `../__usersFiles/${user._id}/${parentDir.path}/${file.name}`,
+        )
+      } else {
+        filePath = path.join(__dirname, `../__usersFiles/${user._id}/${file.name}`)
+      }
+      // Проверка на наличие файла с таким же именем
+      if (fs.existsSync(filePath)) {
+        return res.status(400).json({ message: 'File with this name is already exist' })
+      }
+
+      await fileService.saveFile(file, filePath)
+      const fileType = filePath.split('.').pop()
+
+      function analizePath() {
+        if (parentDir) {
+          return path.join(`${parentDir.path}/${file.name}`)
+        } else {
+          return path.join(`${file.name}`)
+        }
+      }
+      const dbFile = new File({
+        name: file.name,
+        type: fileType,
+        size: file.size,
+        path: analizePath(),
+        parent: parentDir?._id,
+        user: user._id,
+      })
+      dbFile.save()
+      user.usedSpace = user.usedSpace + file.size
+      user.save()
+      res.json(dbFile)
+      /* let filePath = parentDir
+        ? path.join(__dirname, `../__usersFiles/${user._id}/${parentDir.path}/${file.name}`)
+        : path.join(__dirname, `../__usersFiles/${user._id}/${file.name}}`) */
+      /* console.log(filePath)
+      await file.mv(filePath) */
+    } catch (e) {
       console.log(e)
-      res.status(500)
+      res.status(500).json({ message: 'Upload was error' })
     }
   }
 }

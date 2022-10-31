@@ -51,6 +51,17 @@ class FileService {
       }
     })
   }
+  saveFile(file, filePath) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await file.mv(filePath)
+        resolve({ message: 'File was upload' })
+      } catch (e) {
+        console.log(e)
+        reject({ message: 'File upload error' })
+      }
+    })
+  }
 }
 
 module.exports = new FileService()
