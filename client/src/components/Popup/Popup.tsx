@@ -10,7 +10,8 @@ type PopupProps = {
 
 export const Popup: React.FC<PopupProps> = ({ clickOnButton, hiddenPopUp }) => {
 	const [inputValue, setInputValue] = useState('')
-	function hidden(e: React.MouseEvent) {
+
+	function hidden() {
 		hiddenPopUp(false)
 	}
 	return (

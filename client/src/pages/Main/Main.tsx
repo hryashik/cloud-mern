@@ -5,7 +5,7 @@ import React, { ChangeEvent, RefObject, useEffect, useState } from "react"
 import { api, FileType } from "../../api/api"
 import styles from './Main.module.scss'
 import { FilesList } from "../../components/FilesList/FilesList"
-import { deleteFileThunk, getFiles, outDir, renameSelectFile, setCurrentDir, setSelectedFile, uploadFileThunk } from "../../redux/slices/filesSlice"
+import { createDirThunk, deleteFileThunk, getFiles, initialFilesThunk, outDir, renameSelectFile, setCurrentDir, setSelectedFile, uploadFileThunk } from "../../redux/slices/filesSlice"
 import { Popup } from "../../components/Popup/Popup"
 import Button from '@mui/material/Button';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -29,25 +29,9 @@ export const Main: React.FC = () => {
 	const [visiblePopUp, setVisiblePopUp] = useState(false)
 	const [contextMenu, setContextMenu] = useState({ visible: false, coordinates: [0, 0] })
 
-	async function initialFiles() {
-		try {
-			const response = await api.getFiles(currentDir)
-			const data = response?.data
-			console.log(data)
-			if (data !== undefined) dispatch(getFiles(data))
-		} catch (e) {
-			console.log(e)
-		}
-	}
-	async function createDir(name: string) {
-		try {
-			const resp = await api.createDir(name, currentDir)
-			initialFiles()
-			setVisiblePopUp(false)
-		} catch (e) {
-			console.log(e)
-		}
-
+	function createDir(nameDir: string) {
+		dispatch(createDirThunk({ nameDir, parentId: currentDir }))
+		setVisiblePopUp(false)
 	}
 	function backClickHandler() {
 		if (pathStack.length > 1) {
@@ -91,9 +75,8 @@ export const Main: React.FC = () => {
 			files.forEach(file => dispatch(uploadFileThunk({ file, currentDir })))
 		}
 	}
-
 	useEffect(() => {
-		initialFiles()
+		dispatch(initialFilesThunk(currentDir))
 	}, [currentDir])
 
 	if (!isAuth) {

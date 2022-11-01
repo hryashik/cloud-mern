@@ -2,12 +2,10 @@ import React, { useState } from "react";
 import Input from "../../components/UI/Input";
 import style from './Registration.module.scss'
 import { Button, Typography } from '@mui/material'
-import { api } from "../../api/api";
-import { Link, Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../redux/store";
-import { defineUser, ResponseDataType } from "../../redux/slices/userSlice";
-import { AxiosResponse } from "axios";
+import { LoginUserThunk } from "../../redux/slices/userSlice";
 
 export const Registration: React.FC = () => {
 	const isAuth = useSelector((state: RootState) => state.user.isAuth)
@@ -37,8 +35,7 @@ export const Registration: React.FC = () => {
 
 	async function registration() {
 		try {
-			const { data } = await api.registration(email, password)
-			dispatch(defineUser(data))
+			dispatch(LoginUserThunk({ email, password }))
 		} catch (e: any) {
 			const message = e.response.data.message
 			setNotification(message)

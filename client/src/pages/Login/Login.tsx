@@ -2,11 +2,9 @@ import React, { useState } from "react";
 import Input from "../../components/UI/Input";
 import style from '../Registration/Registration.module.scss'
 import { Button, Typography } from '@mui/material'
-import { api } from "../../api/api";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../redux/store";
-/* import { authUser } from "../../redux/slices/userSlice"; */
-import { defineUser } from "../../redux/slices/userSlice";
+import { LoginUserThunk } from "../../redux/slices/userSlice";
 import { Navigate } from "react-router-dom";
 
 export const Login: React.FC = () => {
@@ -36,10 +34,7 @@ export const Login: React.FC = () => {
 
 	async function auth() {
 		try {
-			const resp = await api.login(email, password)
-			const data = resp.data
-			dispatch(defineUser(data))
-
+			dispatch(LoginUserThunk({ email, password }))
 		} catch (e: any) {
 			const message = e.response.data.message
 			console.log(message)

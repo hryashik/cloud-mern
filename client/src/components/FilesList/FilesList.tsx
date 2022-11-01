@@ -1,4 +1,3 @@
-import { RefObject } from 'react'
 import { FileType } from '../../api/api'
 import { File } from './File/File'
 import styles from './FilesList.module.scss'

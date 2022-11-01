@@ -1,5 +1,11 @@
 import axios from 'axios'
-import { ResponseDataType } from '../redux/slices/userSlice'
+
+export interface UserType {
+  diskSpace: number
+  usedSpace: number
+  email: string
+  id: string
+}
 
 export interface FileType {
   _id: string
@@ -12,37 +18,36 @@ export interface FileType {
   size: number
   childs: string[] | null
 }
-
-export type AuthTokenType = {
-  data: ResponseDataType
+export interface UserData {
+  token: string
+  user: UserType
 }
-
 export const api = {
   instance: axios.create({
     baseURL: 'http://localhost:3333/api',
   }),
   async registration(email: string, password: string) {
-    const resp = await this.instance.post<ResponseDataType>('/auth/registration', {
+    const resp = await this.instance.post<UserData>('/auth/registration', {
       email: email,
       password: password,
     })
-    return resp
+    return resp.data
   },
   async login(email: string, password: string) {
-    const resp = await this.instance.post('/auth/login', {
+    const resp = await this.instance.post<UserData>('/auth/login', {
       email: email,
       password: password,
     })
-    return resp
+    return resp.data
   },
   async auth() {
     try {
-      const resp: AuthTokenType = await axios.get('http://localhost:3333/api/auth/auth', {
+      const resp = await this.instance.get<UserData>('auth/auth', {
         headers: {
           Authorization: localStorage.getItem('token'),
         },
       })
-      return resp
+      return resp.data
     } catch (e) {
       console.log(e)
     }
@@ -57,7 +62,7 @@ export const api = {
           },
         },
       )
-      return resp
+      return resp.data
     } catch (e) {
       console.log(e)
     }
@@ -65,7 +70,7 @@ export const api = {
   async createDir(nameDir: string, parentId: string) {
     try {
       if (parentId) {
-        const resp = await this.instance.post(
+        const resp = await this.instance.post<FileType>(
           '/files',
           {
             name: nameDir,
@@ -78,7 +83,7 @@ export const api = {
             },
           },
         )
-        return resp
+        return resp.data
       } else {
         const resp = await this.instance.post(
           '/files',
@@ -92,7 +97,7 @@ export const api = {
             },
           },
         )
-        return resp
+        return resp.data
       }
     } catch (e) {
       console.log(e)
@@ -136,12 +141,12 @@ export const api = {
       if (currentDir) {
         formData.append('parent', currentDir)
       }
-      const resp = await this.instance.post(`/files/upload`, formData, {
+      const resp = await this.instance.post<FileType>(`/files/upload`, formData, {
         headers: {
           Authorization: localStorage.getItem('token'),
         },
         onUploadProgress: ProgressEvent => {
-          console.log(ProgressEvent)
+          /* console.log(ProgressEvent) */
         },
       })
       return resp.data

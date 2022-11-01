@@ -1,3 +1,4 @@
+import { create } from '@mui/material/styles/createTransitions'
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { api, FileType } from '../../api/api'
 
@@ -23,6 +24,17 @@ export const uploadFileThunk = createAsyncThunk(
   'files/upload',
   async ({ file, currentDir }: { file: File; currentDir: string }) => {
     const resp = await api.uploadFile(file, currentDir)
+    return resp
+  },
+)
+export const initialFilesThunk = createAsyncThunk('files/init', async (parentId: string) => {
+  const resp = await api.getFiles(parentId)
+  return resp
+})
+export const createDirThunk = createAsyncThunk(
+  'files/createDir',
+  async ({ nameDir, parentId }: { nameDir: string; parentId: string }) => {
+    const resp = api.createDir(nameDir, parentId)
     return resp
   },
 )
@@ -56,11 +68,26 @@ const filesSlice = createSlice({
     },
   },
   extraReducers(builder) {
+    //Get files
+    builder.addCase(initialFilesThunk.fulfilled, (state, action) => {
+      if (action.payload) {
+        state.files = action.payload
+      }
+    })
+    //Delete file
     builder.addCase(deleteFileThunk.fulfilled, (state, action) => {
       state.files = state.files.filter(el => el._id !== state.selectedFile)
       state.selectedFile = ''
     })
+    //Upload file
     builder.addCase(uploadFileThunk.fulfilled, (state, action) => {
+      console.log(action.payload)
+      if (action.payload) {
+        state.files.push(action.payload)
+      }
+    })
+    //Create directory
+    builder.addCase(createDirThunk.fulfilled, (state, action) => {
       state.files.push(action.payload)
     })
   },
