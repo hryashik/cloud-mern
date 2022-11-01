@@ -1,4 +1,5 @@
 import FolderIcon from '@mui/icons-material/Folder';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { FileType } from '../../../api/api';
@@ -17,7 +18,8 @@ export const File: React.FC<FileProps> = ({
 	date,
 	_id,
 	type,
-	rightClickOnFile
+	rightClickOnFile,
+	size
 }) => {
 	const dispatch = useAppDispatch()
 	const fileDate = date.slice(0, 19).replace('T', ' ')
@@ -25,7 +27,9 @@ export const File: React.FC<FileProps> = ({
 	const textArea = useSelector((state: RootState) => state.textArea)
 
 	function openDirHandler() {
-		dispatch(openDir(_id))
+		if (type === 'dir') {
+			dispatch(openDir(_id))
+		}
 	}
 	function onRightClick(event: React.MouseEvent) {
 		event.preventDefault()
@@ -42,7 +46,11 @@ export const File: React.FC<FileProps> = ({
 			onContextMenu={onRightClick}
 		>
 			<div className={styles.name}>
-				<FolderIcon color='action' />
+				{type === 'dir'
+					? <FolderIcon color='action' />
+					: <InsertDriveFileIcon color='action' />
+				}
+
 				{textArea.id !== _id
 					? <p>{name}</p>
 					: <TextAreaComponent fileId={_id} />
@@ -53,7 +61,7 @@ export const File: React.FC<FileProps> = ({
 
 			<p>{fileDate}</p>
 			<p>{type === 'dir' ? 'Папка' : 'Файл'}</p>
-			<p>Размер файла</p>
+			<p>{size}</p>
 		</div>
 	)
 }

@@ -1,11 +1,11 @@
 import { RootState, useAppDispatch } from "../../redux/store"
 import { useSelector } from "react-redux"
 import { Navigate } from "react-router-dom"
-import React, { RefObject, useEffect, useState } from "react"
+import React, { ChangeEvent, RefObject, useEffect, useState } from "react"
 import { api, FileType } from "../../api/api"
 import styles from './Main.module.scss'
 import { FilesList } from "../../components/FilesList/FilesList"
-import { deleteFileThunk, getFiles, outDir, renameSelectFile, setCurrentDir, setSelectedFile } from "../../redux/slices/filesSlice"
+import { deleteFileThunk, getFiles, outDir, renameSelectFile, setCurrentDir, setSelectedFile, uploadFileThunk } from "../../redux/slices/filesSlice"
 import { Popup } from "../../components/Popup/Popup"
 import Button from '@mui/material/Button';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -84,6 +84,14 @@ export const Main: React.FC = () => {
 		}
 		if (selectedFile) dispatch(setSelectedFile(''))
 	}
+	async function uploadFileHandler(event: ChangeEvent<HTMLInputElement>) {
+		const fileList = event.target.files
+		if (fileList) {
+			const files = Array.from(fileList)
+			files.forEach(file => dispatch(uploadFileThunk({ file, currentDir })))
+		}
+	}
+
 	useEffect(() => {
 		initialFiles()
 	}, [currentDir])
@@ -108,11 +116,16 @@ export const Main: React.FC = () => {
 						onClick={backClickHandler}
 						style={{ cursor: pathStack.length > 1 ? 'pointer' : '' }} />
 					<Button
+						className={styles.createDirButton}
 						variant="outlined"
 						color="primary"
 						onClick={() => setVisiblePopUp(true)}
 					>
 						Создать папку
+					</Button>
+					<Button variant="contained" component="label">
+						Загрузить файл
+						<input hidden accept="image/*" multiple type="file" onChange={uploadFileHandler} />
 					</Button>
 				</header>
 				<div className={styles.path}>

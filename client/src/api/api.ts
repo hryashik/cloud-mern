@@ -13,6 +13,10 @@ export interface FileType {
   childs: string[] | null
 }
 
+export type AuthTokenType = {
+  data: ResponseDataType
+}
+
 export const api = {
   instance: axios.create({
     baseURL: 'http://localhost:3333/api',
@@ -31,7 +35,6 @@ export const api = {
     })
     return resp
   },
-
   async auth() {
     try {
       const resp: AuthTokenType = await axios.get('http://localhost:3333/api/auth/auth', {
@@ -44,7 +47,6 @@ export const api = {
       console.log(e)
     }
   },
-
   async getFiles(parentId: string) {
     try {
       const resp = await this.instance.get<FileType[]>(
@@ -127,8 +129,25 @@ export const api = {
       alert('Файл не удалось переименовать')
     }
   },
-}
-
-export type AuthTokenType = {
-  data: ResponseDataType
+  async uploadFile(file: File, currentDir: string) {
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      if (currentDir) {
+        formData.append('parent', currentDir)
+      }
+      const resp = await this.instance.post(`/files/upload`, formData, {
+        headers: {
+          Authorization: localStorage.getItem('token'),
+        },
+        onUploadProgress: ProgressEvent => {
+          console.log(ProgressEvent)
+        },
+      })
+      return resp.data
+    } catch (e) {
+      console.log(e)
+      alert('Загрузить файл не удалось')
+    }
+  },
 }

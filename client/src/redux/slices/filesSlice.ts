@@ -19,6 +19,13 @@ export const deleteFileThunk = createAsyncThunk('files/deleteFile', async (id: s
   const resp = await api.deleteFile(id)
   return resp
 })
+export const uploadFileThunk = createAsyncThunk(
+  'files/upload',
+  async ({ file, currentDir }: { file: File; currentDir: string }) => {
+    const resp = await api.uploadFile(file, currentDir)
+    return resp
+  },
+)
 
 const filesSlice = createSlice({
   name: 'filesSlice',
@@ -52,6 +59,9 @@ const filesSlice = createSlice({
     builder.addCase(deleteFileThunk.fulfilled, (state, action) => {
       state.files = state.files.filter(el => el._id !== state.selectedFile)
       state.selectedFile = ''
+    })
+    builder.addCase(uploadFileThunk.fulfilled, (state, action) => {
+      state.files.push(action.payload)
     })
   },
 })

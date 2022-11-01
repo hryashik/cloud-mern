@@ -45,6 +45,7 @@ class FileController {
         kids.forEach(async el => await el.remove())
         await fileService.deleteFile(file)
       } else {
+        await fileService.deleteFile(file)
         await File.deleteOne({ _id: fileId })
       }
       await file.remove()
@@ -119,11 +120,6 @@ class FileController {
       user.usedSpace = user.usedSpace + file.size
       user.save()
       res.json(dbFile)
-      /* let filePath = parentDir
-        ? path.join(__dirname, `../__usersFiles/${user._id}/${parentDir.path}/${file.name}`)
-        : path.join(__dirname, `../__usersFiles/${user._id}/${file.name}}`) */
-      /* console.log(filePath)
-      await file.mv(filePath) */
     } catch (e) {
       console.log(e)
       res.status(500).json({ message: 'Upload was error' })
