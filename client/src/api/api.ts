@@ -25,6 +25,9 @@ export interface UserData {
 export const api = {
   instance: axios.create({
     baseURL: 'http://localhost:3333/api',
+    /* headers: {
+      Authorization: localStorage.getItem('token'),
+    }, */
   }),
   async registration(email: string, password: string) {
     const resp = await this.instance.post<UserData>('/auth/registration', {

@@ -1,16 +1,17 @@
 import { RootState, useAppDispatch } from "../../redux/store"
 import { useSelector } from "react-redux"
 import { Navigate } from "react-router-dom"
-import React, { ChangeEvent, RefObject, useEffect, useState } from "react"
+import React, { ChangeEvent, useEffect, useState } from "react"
 import { api, FileType } from "../../api/api"
 import styles from './Main.module.scss'
 import { FilesList } from "../../components/FilesList/FilesList"
-import { createDirThunk, deleteFileThunk, getFiles, initialFilesThunk, outDir, renameSelectFile, setCurrentDir, setSelectedFile, uploadFileThunk } from "../../redux/slices/filesSlice"
+import { createDirThunk, deleteFileThunk, initialFilesThunk, outDir, renameSelectFile, setCurrentDir, setSelectedFile, uploadFileThunk } from "../../redux/slices/filesSlice"
 import { Popup } from "../../components/Popup/Popup"
 import Button from '@mui/material/Button';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ContextMenu } from "../../components/ContextMenu/ContextMenu"
 import { deleteArea, initArea } from "../../redux/slices/textAreaSlice"
+import UploadFileIcon from '@mui/icons-material/UploadFile';
 
 export type contextMenuType = {
 	visible: boolean
@@ -28,6 +29,7 @@ export const Main: React.FC = () => {
 
 	const [visiblePopUp, setVisiblePopUp] = useState(false)
 	const [contextMenu, setContextMenu] = useState({ visible: false, coordinates: [0, 0] })
+	const [dragEnter, setDragEnter] = useState(false)
 
 	function createDir(nameDir: string) {
 		dispatch(createDirThunk({ nameDir, parentId: currentDir }))
@@ -75,6 +77,23 @@ export const Main: React.FC = () => {
 			files.forEach(file => dispatch(uploadFileThunk({ file, currentDir })))
 		}
 	}
+	function dragEnterHandler(event: React.DragEvent<HTMLDivElement>) {
+		event.preventDefault()
+		event.stopPropagation()
+		setDragEnter(true)
+	}
+	function dragLeaveHandler(event: React.DragEvent<HTMLDivElement>) {
+		event.preventDefault()
+		event.stopPropagation()
+		setDragEnter(false)
+	}
+	function onDrop(event: React.DragEvent) {
+		event.preventDefault()
+		event.stopPropagation()
+		const files = Array.from(event.dataTransfer.files)
+		files.forEach(file => dispatch(uploadFileThunk({ file, currentDir })))
+		setDragEnter(false)
+	}
 	useEffect(() => {
 		dispatch(initialFilesThunk(currentDir))
 	}, [currentDir])
@@ -82,7 +101,7 @@ export const Main: React.FC = () => {
 	if (!isAuth) {
 		return <Navigate to="/auth" />
 	}
-	return (
+	return (!dragEnter ?
 		<>
 			{visiblePopUp === true && <Popup hiddenPopUp={setVisiblePopUp} clickOnButton={createDir} />}
 			{contextMenu.visible &&
@@ -91,8 +110,15 @@ export const Main: React.FC = () => {
 					contextMenuRename={contextMenuRename}
 					contextMenuDelete={contextMenuDelete}
 					hiddenContext={hiddenContextAndSelect}
-				/>}
-			<div className={styles.main} onClick={clickOnMainDiv}>
+				/>
+			}
+			<div
+				className={styles.main}
+				onClick={clickOnMainDiv}
+				onDragEnter={dragEnterHandler}
+				onDragLeave={dragLeaveHandler}
+				onDragOver={dragEnterHandler}
+			>
 				<header>
 					<ArrowBackIcon
 						color={pathStack.length > 1 ? 'primary' : 'disabled'}
@@ -120,5 +146,16 @@ export const Main: React.FC = () => {
 				/>
 			</div>
 		</>
+		:
+		<div
+			className={styles.dragArea}
+			onDragEnter={dragEnterHandler}
+			onDragLeave={dragLeaveHandler}
+			onDragOver={dragEnterHandler}
+			onDrop={onDrop}
+		>
+			<p>Перетащите файлы сюда</p>
+			<UploadFileIcon fontSize="large" color="primary" />
+		</div>
 	)
 }
