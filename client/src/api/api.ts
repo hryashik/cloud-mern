@@ -158,4 +158,25 @@ export const api = {
       alert('Загрузить файл не удалось')
     }
   },
+  async downloadFile(file: FileType) {
+    try {
+      const fileBlob = await this.instance.get<Blob>(`/files/download/?fileId=${file._id}`, {
+        responseType: 'blob',
+        headers: {
+          Authorization: localStorage.getItem('token'),
+        },
+      })
+      console.log(fileBlob.data)
+      const downloadUrl = window.URL.createObjectURL(fileBlob.data)
+      const link = document.createElement('a')
+      link.href = downloadUrl
+      link.download = file.name
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+    } catch (e) {
+      console.log(e)
+      alert('Скачать файл не удалось')
+    }
+  },
 }

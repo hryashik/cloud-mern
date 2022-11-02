@@ -125,6 +125,18 @@ class FileController {
       res.status(500).json({ message: 'Upload was error' })
     }
   }
+  async downloadFile(req, res) {
+    try {
+      const { fileId } = req.query
+      const file = await File.findOne({ user: req.user.id, _id: fileId })
+      const localFilePath = path.join(__dirname, `../__usersFiles`, req.user.id, file.path)
+      if (fs.existsSync(localFilePath)) {
+        return res.download(localFilePath, file.name)
+      }
+    } catch (e) {
+      res.status(500).json({ message: 'Download error' })
+    }
+  }
 }
 
 module.exports = new FileController()

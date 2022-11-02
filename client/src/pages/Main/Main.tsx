@@ -46,14 +46,18 @@ export const Main: React.FC = () => {
 			setContextMenu({ visible: true, coordinates })
 		}
 	}
-	async function contextMenuDelete() {
-		await dispatch(deleteFileThunk(selectedFile))
+	function contextMenuDelete() {
+		dispatch(deleteFileThunk(selectedFile))
 		setContextMenu({ visible: false, coordinates: [] })
 	}
 	function contextMenuRename() {
 		const { _id, name } = files.find(el => el._id === selectedFile) as FileType
 		dispatch(initArea({ _id, name }))
 		setContextMenu({ visible: false, coordinates: [] })
+	}
+	function contextMenuDownload() {
+		const file = files.find(el => el._id === selectedFile)
+		if (file) api.downloadFile(file)
 	}
 	function hiddenContextAndSelect() {
 		setContextMenu({ visible: false, coordinates: [] })
@@ -109,6 +113,7 @@ export const Main: React.FC = () => {
 					contextMenu={contextMenu}
 					contextMenuRename={contextMenuRename}
 					contextMenuDelete={contextMenuDelete}
+					contextMenuDownload={contextMenuDownload}
 					hiddenContext={hiddenContextAndSelect}
 				/>
 			}
