@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { FileType } from '../../../api/api';
 import { openDir, setSelectedFile } from '../../../redux/slices/filesSlice';
 import { RootState, useAppDispatch } from '../../../redux/store';
+import formatSize from '../../../utils/formatSize';
 import { TextAreaComponent } from '../../TextArea/TextAreaComponent';
 import styles from './File.module.scss'
 
@@ -61,7 +62,7 @@ export const File: React.FC<FileProps> = ({
 
 			<p>{fileDate}</p>
 			<p>{type === 'dir' ? 'Папка' : 'Файл'}</p>
-			<p>{size}</p>
+			<p>{formatSize(size)}</p>
 		</div>
 	)
 }

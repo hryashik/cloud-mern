@@ -7,7 +7,27 @@
 		font-weight: 500;
 
 		p:first-child {
+			display: flex;
+			align-items: center;
 			text-align: left;
 		}
+	}
+}
+
+.element {
+	min-height: 24px;
+	display: flex;
+	align-items: center;
+
+	&:hover {
+		svg {
+			display: block;
+		}
+	}
+
+	svg {
+		margin-left: 4px;
+		cursor: pointer;
+		display: none;
 	}
 }

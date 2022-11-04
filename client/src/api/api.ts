@@ -25,7 +25,7 @@ export interface UserData {
 export const api = {
   instance: axios.create({
     baseURL: 'http://localhost:3333/api',
-    /* headers: {
+    /*     headers: {
       Authorization: localStorage.getItem('token'),
     }, */
   }),
@@ -55,17 +55,32 @@ export const api = {
       console.log(e)
     }
   },
-  async getFiles(parentId: string) {
+  async getFiles(parentId: string, sortType?: string) {
     try {
-      const resp = await this.instance.get<FileType[]>(
-        `/files${parentId ? `?parent=${parentId}` : ''}`,
-        {
-          headers: {
-            Authorization: localStorage.getItem('token'),
+      if (sortType) {
+        const resp = await this.instance.get<FileType[]>(
+          `/files${parentId ? `?parent=${parentId}` : ''}`,
+          {
+            headers: {
+              Authorization: localStorage.getItem('token'),
+            },
+            params: {
+              sort: sortType,
+            },
           },
-        },
-      )
-      return resp.data
+        )
+        return resp.data
+      } else {
+        const resp = await this.instance.get<FileType[]>(
+          `/files${parentId ? `?parent=${parentId}` : ''}`,
+          {
+            headers: {
+              Authorization: localStorage.getItem('token'),
+            },
+          },
+        )
+        return resp.data
+      }
     } catch (e) {
       console.log(e)
     }

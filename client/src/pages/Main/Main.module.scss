@@ -3,20 +3,23 @@
 	height: 850px;
 
 	header {
+		height: 50px;
 		margin-bottom: 25px;
 		display: flex;
 		align-items: center;
-		justify-content: left;
+		justify-content: flex-start;
 
-		.createDirButton {
-			margin: 0 20px;
+		div {
+			margin-right: 25px;
+		}
+
+		.sort {
+			margin: 0 0 4px auto;
 		}
 	}
 }
 
 .path {
-	margin-bottom: 10px;
-
 	a {
 		color: rgb(0, 68, 255);
 		text-transform: lowercase;

@@ -5,13 +5,14 @@ import React, { ChangeEvent, useEffect, useState } from "react"
 import { api, FileType } from "../../api/api"
 import styles from './Main.module.scss'
 import { FilesList } from "../../components/FilesList/FilesList"
-import { createDirThunk, deleteFileThunk, initialFilesThunk, outDir, renameSelectFile, setCurrentDir, setSelectedFile, uploadFileThunk } from "../../redux/slices/filesSlice"
+import { createDirThunk, deleteFileThunk, initialFilesThunk, outDir, renameSelectFile, setCurrentDir, setSelectedFile, SortType, uploadFileThunk } from "../../redux/slices/filesSlice"
 import { Popup } from "../../components/Popup/Popup"
 import Button from '@mui/material/Button';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ContextMenu } from "../../components/ContextMenu/ContextMenu"
 import { deleteArea, initArea } from "../../redux/slices/textAreaSlice"
 import UploadFileIcon from '@mui/icons-material/UploadFile';
+import SortComponent from "../../components/SortComponent/SortComponent"
 
 export type contextMenuType = {
 	visible: boolean
@@ -25,6 +26,7 @@ export const Main: React.FC = () => {
 	const isAuth = useSelector((state: RootState) => state.user.isAuth)
 	const currentDir = useSelector((state: RootState) => state.files.currentDir)
 	const pathStack = useSelector((state: RootState) => state.files.pathStack)
+	const selectedSort = useSelector((state: RootState) => state.files.sortType) as SortType
 	const textArea = useSelector((state: RootState) => state.textArea)
 
 	const [visiblePopUp, setVisiblePopUp] = useState(false)
@@ -99,8 +101,8 @@ export const Main: React.FC = () => {
 		setDragEnter(false)
 	}
 	useEffect(() => {
-		dispatch(initialFilesThunk(currentDir))
-	}, [currentDir])
+		dispatch(initialFilesThunk({ parentId: currentDir, selectedSort }))
+	}, [currentDir, selectedSort])
 
 	if (!isAuth) {
 		return <Navigate to="/auth" />
@@ -125,22 +127,32 @@ export const Main: React.FC = () => {
 				onDragOver={dragEnterHandler}
 			>
 				<header>
-					<ArrowBackIcon
-						color={pathStack.length > 1 ? 'primary' : 'disabled'}
-						onClick={backClickHandler}
-						style={{ cursor: pathStack.length > 1 ? 'pointer' : '' }} />
-					<Button
-						className={styles.createDirButton}
-						variant="outlined"
-						color="primary"
-						onClick={() => setVisiblePopUp(true)}
-					>
-						Создать папку
-					</Button>
-					<Button variant="contained" component="label">
-						Загрузить файл
-						<input hidden accept="image/*" multiple type="file" onChange={uploadFileHandler} />
-					</Button>
+					<div>
+						<ArrowBackIcon
+							color={pathStack.length > 1 ? 'primary' : 'disabled'}
+							onClick={backClickHandler}
+							style={{ cursor: pathStack.length > 1 ? 'pointer' : '' }}
+						/>
+					</div>
+					<div>
+						<Button
+							className={styles.createDirButton}
+							variant="outlined"
+							color="primary"
+							onClick={() => setVisiblePopUp(true)}
+						>
+							Создать папку
+						</Button>
+					</div>
+					<div>
+						<Button variant="contained" component="label">
+							Загрузить файл
+							<input hidden accept="image/*" multiple type="file" onChange={uploadFileHandler} />
+						</Button>
+					</div>
+					<div className={styles.sort}>
+						<SortComponent />
+					</div>
 				</header>
 				<div className={styles.path}>
 					<a href="#">/root/{currentDir}</a>

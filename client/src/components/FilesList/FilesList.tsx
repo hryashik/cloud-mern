@@ -19,7 +19,7 @@ export const FilesList: React.FC<FilesListProps> = ({
 		/>)
 	return (
 		<div className={styles.filesList} onClick={(e) => e.stopPropagation()}>
-			<header>
+			<header >
 				<p>Имя</p>
 				<p>Дата создания</p>
 				<p>Тип</p>
