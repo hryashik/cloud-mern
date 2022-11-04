@@ -7,13 +7,14 @@ import React, { ChangeEvent } from 'react';
 import { RootState, useAppDispatch } from '../../redux/store';
 import { useSelector } from 'react-redux';
 
-export default function SortComponent() {
+const SortComponent = () => {
   const dispatch = useAppDispatch()
   const selectedSort = useSelector((state: RootState) => state.files.sortType)
   function onChangeSelect(event: ChangeEvent<HTMLSelectElement>) {
     const value = event.target.value as SortType
     dispatch(changeSort(value))
   }
+  console.log('Перерисовка сортировки')
   return (
     <Box sx={{ minWidth: 120 }}>
       <FormControl fullWidth size='small'>
@@ -32,3 +33,5 @@ export default function SortComponent() {
     </Box >
   );
 }
+
+export default React.memo(SortComponent)

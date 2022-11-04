@@ -1,3 +1,4 @@
+import React from 'react'
 import { FileType } from '../../api/api'
 import { File } from './File/File'
 import styles from './FilesList.module.scss'
@@ -17,6 +18,7 @@ export const FilesList: React.FC<FilesListProps> = ({
 			key={file._id}
 			rightClickOnFile={rightClickOnFile}
 		/>)
+	console.log('fileslist render')
 	return (
 		<div className={styles.filesList} onClick={(e) => e.stopPropagation()}>
 			<header >

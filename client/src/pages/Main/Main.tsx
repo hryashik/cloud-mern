@@ -1,18 +1,17 @@
 import { RootState, useAppDispatch } from "../../redux/store"
 import { useSelector } from "react-redux"
 import { Navigate } from "react-router-dom"
-import React, { ChangeEvent, useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { api, FileType } from "../../api/api"
 import styles from './Main.module.scss'
 import { FilesList } from "../../components/FilesList/FilesList"
-import { createDirThunk, deleteFileThunk, initialFilesThunk, outDir, renameSelectFile, setCurrentDir, setSelectedFile, SortType, uploadFileThunk } from "../../redux/slices/filesSlice"
+import { createDirThunk, deleteFileThunk, initialFilesThunk, renameSelectFile, setSelectedFile, SortType, uploadFileThunk } from "../../redux/slices/filesSlice"
 import { Popup } from "../../components/Popup/Popup"
-import Button from '@mui/material/Button';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ContextMenu } from "../../components/ContextMenu/ContextMenu"
 import { deleteArea, initArea } from "../../redux/slices/textAreaSlice"
 import UploadFileIcon from '@mui/icons-material/UploadFile';
-import SortComponent from "../../components/SortComponent/SortComponent"
+import { BreadCrumbsComponent } from "../../components/BreadCrumbsComponent/BreadCrumbsComponent"
+import MainOptions from "../../components/MainOptions/MainOptions"
 
 export type contextMenuType = {
 	visible: boolean
@@ -36,11 +35,6 @@ export const Main: React.FC = () => {
 	function createDir(nameDir: string) {
 		dispatch(createDirThunk({ nameDir, parentId: currentDir }))
 		setVisiblePopUp(false)
-	}
-	function backClickHandler() {
-		if (pathStack.length > 1) {
-			dispatch(outDir())
-		}
 	}
 	function rightClickOnFile(fileId: string, coordinates: number[]) {
 		dispatch(setSelectedFile(fileId))
@@ -76,13 +70,6 @@ export const Main: React.FC = () => {
 		}
 		if (selectedFile) dispatch(setSelectedFile(''))
 	}
-	async function uploadFileHandler(event: ChangeEvent<HTMLInputElement>) {
-		const fileList = event.target.files
-		if (fileList) {
-			const files = Array.from(fileList)
-			files.forEach(file => dispatch(uploadFileThunk({ file, currentDir })))
-		}
-	}
 	function dragEnterHandler(event: React.DragEvent<HTMLDivElement>) {
 		event.preventDefault()
 		event.stopPropagation()
@@ -102,7 +89,7 @@ export const Main: React.FC = () => {
 	}
 	useEffect(() => {
 		dispatch(initialFilesThunk({ parentId: currentDir, selectedSort }))
-	}, [currentDir, selectedSort])
+	}, [currentDir, selectedSort, dispatch])
 
 	if (!isAuth) {
 		return <Navigate to="/auth" />
@@ -126,36 +113,9 @@ export const Main: React.FC = () => {
 				onDragLeave={dragLeaveHandler}
 				onDragOver={dragEnterHandler}
 			>
-				<header>
-					<div>
-						<ArrowBackIcon
-							color={pathStack.length > 1 ? 'primary' : 'disabled'}
-							onClick={backClickHandler}
-							style={{ cursor: pathStack.length > 1 ? 'pointer' : '' }}
-						/>
-					</div>
-					<div>
-						<Button
-							className={styles.createDirButton}
-							variant="outlined"
-							color="primary"
-							onClick={() => setVisiblePopUp(true)}
-						>
-							Создать папку
-						</Button>
-					</div>
-					<div>
-						<Button variant="contained" component="label">
-							Загрузить файл
-							<input hidden accept="image/*" multiple type="file" onChange={uploadFileHandler} />
-						</Button>
-					</div>
-					<div className={styles.sort}>
-						<SortComponent />
-					</div>
-				</header>
+				<MainOptions setVisiblePopUp={setVisiblePopUp} currentDir={currentDir} />
 				<div className={styles.path}>
-					<a href="#">/root/{currentDir}</a>
+					<BreadCrumbsComponent />
 				</div>
 				<FilesList
 					files={files}
