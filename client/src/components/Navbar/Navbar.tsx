@@ -25,7 +25,7 @@ const settings = ['Profile', 'Account', 'Dashboard', 'Выйти'];
 
 const Navbar = () => {
 	const dispatch = useAppDispatch()
-	const isAuth = useSelector((state: RootState) => state.user.isAuth)
+	const { isAuth, email } = useSelector((state: RootState) => state.user)
 	const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
 	const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
@@ -140,7 +140,7 @@ const Navbar = () => {
 						<Box sx={{ flexGrow: 0 }}>
 							<Tooltip title="Open settings">
 								<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-									<Avatar alt="A" src="/static/images/avatar/2.jpg" />
+									<Avatar alt={email[0].toUpperCase()} src="/static/images/avatar/2.jpg" />
 								</IconButton>
 							</Tooltip>
 							<Menu

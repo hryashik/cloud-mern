@@ -32,30 +32,32 @@ export const MainOptions: React.FC<MainOptionsProps> = ({ setVisiblePopUp, curre
   console.log('Перерисовка мейнопшнс')
   return (
     <header>
-      <div>
-        <ArrowBackIcon
-          color={pathStack.length > 1 ? 'primary' : 'disabled'}
-          onClick={backClickHandler}
-          style={{ cursor: pathStack.length > 1 ? 'pointer' : '' }}
-        />
+      <div className={styles.leftSide}>
+        <div>
+          <ArrowBackIcon
+            color={pathStack.length > 1 ? 'primary' : 'disabled'}
+            onClick={backClickHandler}
+            style={{ cursor: pathStack.length > 1 ? 'pointer' : '' }}
+          />
+        </div>
+        <div>
+          <Button
+            className={styles.createDirButton}
+            variant="outlined"
+            color="primary"
+            onClick={() => setVisiblePopUp(true)}
+          >
+            Создать папку
+          </Button>
+        </div>
+        <div>
+          <Button variant="contained" component="label">
+            Загрузить файл
+            <input hidden accept="image/*" multiple type="file" onChange={uploadFileHandler} />
+          </Button>
+        </div>
       </div>
-      <div>
-        <Button
-          className={styles.createDirButton}
-          variant="outlined"
-          color="primary"
-          onClick={() => setVisiblePopUp(true)}
-        >
-          Создать папку
-        </Button>
-      </div>
-      <div>
-        <Button variant="contained" component="label">
-          Загрузить файл
-          <input hidden accept="image/*" multiple type="file" onChange={uploadFileHandler} />
-        </Button>
-      </div>
-      <div className={styles.sort}>
+      <div className={styles.rightSide}>
         <SortComponent />
       </div>
     </header>

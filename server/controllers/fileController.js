@@ -4,6 +4,23 @@ const fileService = require('../services/fileService')
 const path = require('path')
 const fs = require('fs')
 
+async function recursiveDeleteDir(file) {
+  if (file.childs.length) {
+    console.log(1)
+    const kids = await File.find({ parent: file.id })
+    await file.updateOne({ childs: [] })
+    for (let kid of kids) {
+      recursiveDeleteDir(kid)
+    }
+    await File.remove({ _id: file.id })
+    await fileService.deleteFile(file)
+  } else {
+    console.log('Детей нет')
+    await File.deleteOne({ _id: file.id })
+    await fileService.deleteFile(file)
+  }
+}
+
 class FileController {
   async createDir(req, res) {
     try {
@@ -53,17 +70,7 @@ class FileController {
     try {
       const { fileId } = req.query
       const file = await File.findOne({ _id: fileId })
-      //if dir has kids
-      if (file.childs.length) {
-        //initialize kids and delete them in the db
-        const kids = await File.find({ parent: fileId })
-        kids.forEach(async el => await el.remove())
-        await fileService.deleteFile(file)
-      } else {
-        await fileService.deleteFile(file)
-        await File.deleteOne({ _id: fileId })
-      }
-      await file.remove()
+      recursiveDeleteDir(file)
       res.status(200).json({ message: 'file was deleted' })
     } catch (e) {
       console.log(e)
@@ -134,6 +141,8 @@ class FileController {
       dbFile.save()
       user.usedSpace = user.usedSpace + file.size
       user.save()
+      parentDir.childs.push(dbFile)
+      parentDir.save()
       res.json(dbFile)
     } catch (e) {
       console.log(e)

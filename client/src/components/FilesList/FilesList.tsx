@@ -6,11 +6,13 @@ import styles from './FilesList.module.scss'
 type FilesListProps = {
 	files: FileType[]
 	rightClickOnFile: (fileId: string, coordinates: number[]) => void
+	viewTemplate: 'list' | 'module'
 }
 
 export const FilesList: React.FC<FilesListProps> = ({
 	files,
 	rightClickOnFile,
+	viewTemplate
 }) => {
 	const filesMapped = files.map(file =>
 		<File

@@ -31,6 +31,7 @@ export const Main: React.FC = () => {
 	const [visiblePopUp, setVisiblePopUp] = useState(false)
 	const [contextMenu, setContextMenu] = useState({ visible: false, coordinates: [0, 0] })
 	const [dragEnter, setDragEnter] = useState(false)
+	const [viewTemplate, setViewTemplate] = useState<'list' | 'module'>('list')
 
 	function createDir(nameDir: string) {
 		dispatch(createDirThunk({ nameDir, parentId: currentDir }))
@@ -120,6 +121,7 @@ export const Main: React.FC = () => {
 				<FilesList
 					files={files}
 					rightClickOnFile={rightClickOnFile}
+					viewTemplate={viewTemplate}
 				/>
 			</div>
 		</>

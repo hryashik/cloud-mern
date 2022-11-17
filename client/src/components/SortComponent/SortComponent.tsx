@@ -16,7 +16,7 @@ const SortComponent = () => {
   }
   console.log('Перерисовка сортировки')
   return (
-    <Box sx={{ minWidth: 120 }}>
+    <Box sx={{ minWidth: 120, marginRight: 4 }}>
       <FormControl fullWidth size='small'>
         <InputLabel variant="standard" htmlFor="uncontrolled-native">
           Сортировка
