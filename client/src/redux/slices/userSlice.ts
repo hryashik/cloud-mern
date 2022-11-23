@@ -12,6 +12,13 @@ export const CheckAuthThunk = createAsyncThunk('user/checkAuth', async () => {
   const response = await api.auth()
   return response
 })
+export const RegisterUserThunk = createAsyncThunk(
+  'user/registerUser',
+  async ({ email, password }: { email: string; password: string }) => {
+    const response = await api.registration(email, password)
+    return response
+  },
+)
 
 export type UserResponseType = {
   diskSpace: number
@@ -47,6 +54,17 @@ const userSlice = createSlice({
   },
   extraReducers: builder => {
     builder.addCase(LoginUserThunk.fulfilled, (state, action) => {
+      if (action.payload) {
+        const { token, user } = action.payload
+        localStorage.setItem('token', token)
+        state.diskSpace = user.diskSpace
+        state.usedSpace = user.usedSpace
+        state.email = user.email
+        state.id = user.id
+        state.isAuth = true
+      }
+    })
+    builder.addCase(RegisterUserThunk.fulfilled, (state, action) => {
       if (action.payload) {
         const { token, user } = action.payload
         localStorage.setItem('token', token)

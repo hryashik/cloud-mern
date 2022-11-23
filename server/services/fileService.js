@@ -1,7 +1,5 @@
-const { resolveSoa } = require('dns')
 const fs = require('fs')
 const path = require('path')
-const File = require('../models/File')
 const fsExtra = require('fs-extra')
 
 class FileService {

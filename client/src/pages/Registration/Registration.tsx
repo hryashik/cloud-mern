@@ -5,14 +5,13 @@ import { Button, Typography } from '@mui/material'
 import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../redux/store";
-import { LoginUserThunk } from "../../redux/slices/userSlice";
+import { RegisterUserThunk } from "../../redux/slices/userSlice";
 
 export const Registration: React.FC = () => {
 	const isAuth = useSelector((state: RootState) => state.user.isAuth)
 	const dispatch = useAppDispatch()
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
-	const [isRegister, setRegister] = useState(false)
 	const [notification, setNotification] = useState('')
 	function changeEmail(event: React.ChangeEvent<HTMLInputElement>) {
 		const value = event.target.value
@@ -35,7 +34,7 @@ export const Registration: React.FC = () => {
 
 	async function registration() {
 		try {
-			dispatch(LoginUserThunk({ email, password }))
+			dispatch(RegisterUserThunk({ email, password }))
 		} catch (e: any) {
 			const message = e.response.data.message
 			setNotification(message)
