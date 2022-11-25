@@ -24,14 +24,12 @@ export const Main: React.FC = () => {
 	const selectedFile = useSelector((state: RootState) => state.files.selectedFile)
 	const isAuth = useSelector((state: RootState) => state.user.isAuth)
 	const currentDir = useSelector((state: RootState) => state.files.currentDir)
-	const pathStack = useSelector((state: RootState) => state.files.pathStack)
 	const selectedSort = useSelector((state: RootState) => state.files.sortType) as SortType
 	const textArea = useSelector((state: RootState) => state.textArea)
 
 	const [visiblePopUp, setVisiblePopUp] = useState(false)
 	const [contextMenu, setContextMenu] = useState({ visible: false, coordinates: [0, 0] })
 	const [dragEnter, setDragEnter] = useState(false)
-	const [viewTemplate, setViewTemplate] = useState<'list' | 'module'>('list')
 
 	function createDir(nameDir: string) {
 		dispatch(createDirThunk({ nameDir, parentId: currentDir }))
@@ -115,13 +113,10 @@ export const Main: React.FC = () => {
 				onDragOver={dragEnterHandler}
 			>
 				<MainOptions setVisiblePopUp={setVisiblePopUp} currentDir={currentDir} />
-				<div className={styles.path}>
-					<BreadCrumbsComponent />
-				</div>
+				<BreadCrumbsComponent />
 				<FilesList
 					files={files}
 					rightClickOnFile={rightClickOnFile}
-					viewTemplate={viewTemplate}
 				/>
 			</div>
 		</>

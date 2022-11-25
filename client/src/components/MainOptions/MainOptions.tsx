@@ -13,7 +13,7 @@ type MainOptionsProps = {
   currentDir: string
 }
 
-export const MainOptions: React.FC<MainOptionsProps> = ({ setVisiblePopUp, currentDir }) => {
+export const MainOptions: React.FC<MainOptionsProps> = React.memo(({ setVisiblePopUp, currentDir }) => {
   const dispatch = useAppDispatch()
   const pathStack = useSelector((state: RootState) => state.files.pathStack)
 
@@ -63,4 +63,5 @@ export const MainOptions: React.FC<MainOptionsProps> = ({ setVisiblePopUp, curre
     </header>
   )
 }
+)
 export default React.memo(MainOptions)

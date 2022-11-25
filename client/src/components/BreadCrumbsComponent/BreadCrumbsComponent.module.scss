@@ -1,0 +1,25 @@
+.main {
+  font-family: 'Roboto';
+  color: grey;
+
+  ul {
+    display: flex;
+    user-select: none;
+  }
+
+  li {
+    list-style-type: none;
+
+    &:hover {
+      cursor: pointer;
+      color: cornflowerblue;
+    }
+
+    &::after {
+      content: '/';
+      margin: 0 10px;
+    }
+  }
+
+  margin-bottom: 15px;
+}

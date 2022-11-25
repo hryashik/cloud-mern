@@ -57,7 +57,13 @@ const filesSlice = createSlice({
       state.files = action.payload
     },
     setCurrentDir(state, action: PayloadAction<string>) {
-      state.currentDir = action.payload
+      const name = action.payload
+      state.pathStack.forEach((el, idx) => {
+        if (el === name) {
+          state.pathStack.splice(idx + 1)
+        }
+      })
+      state.currentDir = name
     },
     openDir(state, action: PayloadAction<string>) {
       state.currentDir = action.payload

@@ -1,4 +1,3 @@
-import { api } from '../../api/api'
 import styles from './ContextMenu.module.scss'
 
 
