@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 import { api, UserType } from '../../api/api'
 
 export const LoginUserThunk = createAsyncThunk(
@@ -19,12 +19,17 @@ export const RegisterUserThunk = createAsyncThunk(
     return response
   },
 )
+export const ChangeAvatarUserThunk = createAsyncThunk('user/changeAvatar', async (link: string) => {
+  const response = await api.changeAvatar(link)
+  return response
+})
 
 export type UserResponseType = {
   diskSpace: number
   usedSpace: number
   email: string
   id: number
+  avatar?: string
 }
 
 interface IUserState extends UserType {
@@ -50,6 +55,7 @@ const userSlice = createSlice({
       state.usedSpace = 0
       state.id = ''
       localStorage.removeItem('token')
+      state.avatar = ''
     },
   },
   extraReducers: builder => {
@@ -62,6 +68,7 @@ const userSlice = createSlice({
         state.email = user.email
         state.id = user.id
         state.isAuth = true
+        state.avatar = user.avatar
       }
     })
     builder.addCase(RegisterUserThunk.fulfilled, (state, action) => {
@@ -84,8 +91,17 @@ const userSlice = createSlice({
         state.email = user.email
         state.id = user.id
         state.isAuth = true
+        state.avatar = user.avatar
       }
     })
+    builder.addCase(
+      ChangeAvatarUserThunk.fulfilled,
+      (state, action: PayloadAction<UserResponseType>) => {
+        const { avatar } = action.payload
+        state.avatar = avatar
+        console.log(213213123123)
+      },
+    )
   },
 })
 

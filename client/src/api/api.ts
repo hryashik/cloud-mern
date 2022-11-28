@@ -5,6 +5,7 @@ export interface UserType {
   usedSpace: number
   email: string
   id: string
+  avatar?: string
 }
 
 export interface FileType {
@@ -192,6 +193,24 @@ export const api = {
     } catch (e) {
       console.log(e)
       alert('Скачать файл не удалось')
+    }
+  },
+  async changeAvatar(link: string) {
+    try {
+      const response = await this.instance.post(
+        '/users/avatar',
+        {
+          link: link,
+        },
+        {
+          headers: {
+            Authorization: localStorage.getItem('token'),
+          },
+        },
+      )
+      return response.data
+    } catch (e) {
+      console.log(e)
     }
   },
 }

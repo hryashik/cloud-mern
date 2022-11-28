@@ -12,6 +12,7 @@ import { deleteArea, initArea } from "../../redux/slices/textAreaSlice"
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import { BreadCrumbsComponent } from "../../components/BreadCrumbsComponent/BreadCrumbsComponent"
 import MainOptions from "../../components/MainOptions/MainOptions"
+import { Preloader } from "../../components/Preloader/Preloader"
 
 export type contextMenuType = {
 	visible: boolean
@@ -20,10 +21,8 @@ export type contextMenuType = {
 
 export const Main: React.FC = () => {
 	const dispatch = useAppDispatch()
-	const files = useSelector((state: RootState) => state.files.files)
-	const selectedFile = useSelector((state: RootState) => state.files.selectedFile)
+	const { filesModuleReady, files, selectedFile, currentDir } = useSelector((state: RootState) => state.files)
 	const isAuth = useSelector((state: RootState) => state.user.isAuth)
-	const currentDir = useSelector((state: RootState) => state.files.currentDir)
 	const selectedSort = useSelector((state: RootState) => state.files.sortType) as SortType
 	const textArea = useSelector((state: RootState) => state.textArea)
 
@@ -92,6 +91,8 @@ export const Main: React.FC = () => {
 
 	if (!isAuth) {
 		return <Navigate to="/auth" />
+	} else if (!filesModuleReady) {
+		return <Preloader />
 	}
 	return (!dragEnter ?
 		<>

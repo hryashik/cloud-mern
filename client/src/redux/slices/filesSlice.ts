@@ -8,6 +8,7 @@ export enum SortType {
 }
 
 type FilesSliceType = {
+  filesModuleReady: boolean
   files: FileType[]
   currentDir: string
   pathStack: string[]
@@ -16,6 +17,7 @@ type FilesSliceType = {
 }
 
 const initialState: FilesSliceType = {
+  filesModuleReady: false,
   files: [],
   currentDir: '',
   pathStack: [''],
@@ -91,6 +93,7 @@ const filesSlice = createSlice({
     builder.addCase(initialFilesThunk.fulfilled, (state, action) => {
       if (action.payload) {
         state.files = action.payload
+        state.filesModuleReady = true
       }
     })
     //Delete file

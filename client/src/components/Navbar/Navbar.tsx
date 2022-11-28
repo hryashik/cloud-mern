@@ -15,8 +15,8 @@ import AdbIcon from '@mui/icons-material/Adb';
 import BackupIcon from '@mui/icons-material/Backup';
 import { useSelector } from 'react-redux';
 import { RootState, useAppDispatch } from '../../redux/store';
-import { Link, } from 'react-router-dom';
-import './Navbar.module.scss'
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import styles from './Navbar.module.scss'
 import { logOut } from '../../redux/slices/userSlice';
 
 
@@ -24,8 +24,9 @@ const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Выйти'];
 
 const Navbar = () => {
+	const navigate = useNavigate()
 	const dispatch = useAppDispatch()
-	const { isAuth, email } = useSelector((state: RootState) => state.user)
+	const { isAuth, email, avatar } = useSelector((state: RootState) => state.user)
 	const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
 	const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
@@ -41,15 +42,21 @@ const Navbar = () => {
 	};
 
 	const handleCloseUserMenu = (setting: string) => {
-		if (setting === 'Выйти') {
-			dispatch(logOut())
+		switch (setting) {
+			case 'Выйти':
+				dispatch(logOut())
+				break
+			case 'Profile':
+				navigate('/profile')
+				break
+
 		}
 		setAnchorElUser(null);
 	};
 
 	return (
 		<AppBar position="static">
-			<Container maxWidth="xl">
+			<Container className={styles.container}>
 				<Toolbar disableGutters>
 					<BackupIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
 					<Typography
@@ -140,7 +147,7 @@ const Navbar = () => {
 						<Box sx={{ flexGrow: 0 }}>
 							<Tooltip title="Open settings">
 								<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-									<Avatar alt={email[0].toUpperCase()} src="/static/images/avatar/2.jpg" />
+									<Avatar alt={email[0].toUpperCase()} src={avatar} />
 								</IconButton>
 							</Tooltip>
 							<Menu

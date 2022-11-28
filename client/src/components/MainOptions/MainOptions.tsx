@@ -7,7 +7,6 @@ import { RootState, useAppDispatch } from "../../redux/store";
 import styles from './MainOptions.module.scss'
 import React from "react";
 import { useSelector } from "react-redux";
-import path from "path";
 type MainOptionsProps = {
   setVisiblePopUp: (bool: boolean) => void
   currentDir: string
@@ -31,7 +30,7 @@ export const MainOptions: React.FC<MainOptionsProps> = React.memo(({ setVisibleP
   }
   console.log('Перерисовка мейнопшнс')
   return (
-    <header>
+    <header className={styles.wrapper}>
       <div className={styles.leftSide}>
         <div>
           <ArrowBackIcon
